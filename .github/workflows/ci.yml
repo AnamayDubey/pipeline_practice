@@ -1,25 +1,36 @@
-name: CI of the Project
+name: CI Pipeline
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
 jobs:
   build:
-    name: Build NodeJS app
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Setup NodeJS
-        uses: actions/setup-node@v3
 
       - name: Install dependencies
         run: npm install
-      
-      - name: Run Typescript compiler to build project
-        run: npm run build
-    
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run tests
+        run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to server
+        run: echo "Deploying the app..."
